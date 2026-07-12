@@ -1,4 +1,5 @@
 "use client"
+import CoverPicker from '@/app/_components/CoverPicker';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { SmilePlus } from 'lucide-react';
@@ -14,14 +15,16 @@ function CreateWorkspace() {
     <div className="p-10 md:px-36 lg:px-64 xl:px-96 py-28">
       <div className="shadow-2xl rounded-xl">
         {/* Cover Image */}
-        <div className="relative group cursor-pointer">
-          <h2 className="hidden absolute p-4 w-full h-full items-center justify-center
-          group-hover:flex ">Change Cover</h2>
-          <div className="group-hover:opacity-40">
-            <Image src={coverImage} alt="Cover Image" width={400} height={400} 
-            className="w-full h-[150px] object-cover rounded-t-xl" />
+        <CoverPicker setNewCover={(v)=>setCoverImage(v)}>
+          <div className="relative group cursor-pointer">
+            <h2 className="hidden absolute p-4 w-full h-full items-center justify-center
+            group-hover:flex ">Change Cover</h2>
+            <div className="group-hover:opacity-40">
+              <Image src={coverImage} alt="Cover Image" width={400} height={400} 
+              className="w-full h-[150px] object-cover rounded-t-xl" />
+            </div>
           </div>
-        </div>
+        </CoverPicker>
         {/* Input Section */}
         <div className="p-12">
           <h2 className="font-medium text-xl">Create a new workspace</h2>
