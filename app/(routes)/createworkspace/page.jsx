@@ -3,8 +3,12 @@ import CoverPicker from '@/app/_components/CoverPicker';
 import EmojiPickerComponent from '@/app/_components/EmojiPickerComponent';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { SmilePlus } from 'lucide-react';
+import { db } from '@/config/firebaseConfig';
+import { useAuth, useUser } from '@clerk/nextjs';
+import { doc, setDoc } from 'firebase/firestore/lite';
+import { Loader2Icon, SmilePlus } from 'lucide-react';
 import Image from 'next/image'
+import { useRouter } from 'next/navigation';
 import React from 'react'
 import { useState } from 'react'
 
@@ -12,6 +16,28 @@ function CreateWorkspace() {
   const [coverImage, setCoverImage] = useState('/cover.png');
   const [workspaceName,setWorkspaceName] = useState();
   const [emoji,setEmoji] = useState();
+  const {user} = useUser();
+  const {orgId} = useAuth();
+  const [loading,setLoading] = useState(false);
+  const router = useRouter();
+
+  /**
+   * used to create a new workspace in the firestore database
+   */
+  const OnCreateWorkspace = async ()=>{
+    setLoading(true);
+    const docId = Date.now();
+    const result = await setDoc(doc(db,"Workspace",docId.toString()),{
+      workspaceName:workspaceName,
+      emoji:emoji,
+      coverImage:coverImage,
+      createdBy:user?.primaryEmailAddress?.emailAddress,
+      id:docId,
+      orgId:orgId?orgId:user?.primaryEmailAddress?.emailAddress
+    });
+    setLoading(false);
+    router.replace(`/workspace/${docId}`);
+  }
 
   return (
     <div className="p-10 md:px-36 lg:px-64 xl:px-96 py-28">
@@ -41,7 +67,9 @@ function CreateWorkspace() {
             <Input placeholder="Workspace Name" onChange={(e) =>setWorkspaceName(e.target.value)} />
           </div>
           <div className="mt-7 flex justify-end">
-            <Button disabled={!workspaceName?.length}>Create</Button>
+            <Button disabled={!workspaceName?.length||loading} 
+            onClick={OnCreateWorkspace}
+            > Create {loading&&<Loader2Icon className="animate-spin ml-2" />}</Button>
             <Button variant="outline">Cancel</Button>
           </div>
         </div>
