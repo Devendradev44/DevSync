@@ -11,6 +11,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation';
 import React from 'react'
 import { useState } from 'react'
+import uuid64 from 'uuid64';
 
 function CreateWorkspace() {
   const [coverImage, setCoverImage] = useState('/cover.png');
@@ -26,17 +27,32 @@ function CreateWorkspace() {
    */
   const OnCreateWorkspace = async ()=>{
     setLoading(true);
-    const docId = Date.now();
-    const result = await setDoc(doc(db,"Workspace",docId.toString()),{
+    const workspaceId = Date.now();
+    const result = await setDoc(doc(db,"Workspace",workspaceId.toString()),{
       workspaceName:workspaceName,
       emoji:emoji,
       coverImage:coverImage,
       createdBy:user?.primaryEmailAddress?.emailAddress,
-      id:docId,
+      id:workspaceId,
       orgId:orgId?orgId:user?.primaryEmailAddress?.emailAddress
     });
+    const docId = uuid64();
+    await setDoc(doc(db,"WorkspaceDocuments",docId.toString()),{
+      workspaceId:workspaceId,
+      createdBy:user?.primaryEmailAddress?.emailAddress,
+      coverImage:null,
+      emoji:null,
+      id:docId,
+      documentOutput:[]
+    });
+
+    await setDoc(doc(db,"documentOutput",docId.toString()),{
+      docId:docId,
+      output:[]
+    });
+    
     setLoading(false);
-    router.replace(`/workspace/${docId}`);
+    router.replace(`/workspace/${workspaceId}/${docId}`);
   }
 
   return (
