@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { db } from '@/config/firebaseConfig';
 import { useAuth, useUser } from '@clerk/nextjs';
-import { doc, setDoc } from 'firebase/firestore/lite';
+import { doc, setDoc } from 'firebase/firestore';
 import { Loader2Icon, SmilePlus } from 'lucide-react';
 import Image from 'next/image'
 import { useRouter } from 'next/navigation';
@@ -15,8 +15,8 @@ import uuid64 from 'uuid64';
 
 function CreateWorkspace() {
   const [coverImage, setCoverImage] = useState('/cover.png');
-  const [workspaceName,setWorkspaceName] = useState();
-  const [emoji,setEmoji] = useState();
+  const [workspaceName,setWorkspaceName] = useState("");
+  const [emoji,setEmoji] = useState("");
   const {user} = useUser();
   const {orgId} = useAuth();
   const [loading,setLoading] = useState(false);
@@ -37,12 +37,16 @@ function CreateWorkspace() {
       orgId:orgId?orgId:user?.primaryEmailAddress?.emailAddress
     });
     const docId = uuid64();
+//     console.log("DB:", db);
+//     console.log("Workspace ID:", workspaceId);
+//     console.log("Doc ID:", docId);
     await setDoc(doc(db,"WorkspaceDocuments",docId.toString()),{
       workspaceId:workspaceId,
       createdBy:user?.primaryEmailAddress?.emailAddress,
       coverImage:null,
       emoji:null,
       id:docId,
+      documentName:"Untitled Document",
       documentOutput:[]
     });
 
