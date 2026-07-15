@@ -28,6 +28,7 @@ function SideNav() {
       collection(db, "WorkspaceDocuments"),
       where("workspaceId", "==", Number(params?.workspaceid))
     );
+    setDocumentList([]);
 
     return onSnapshot(q, (querySnapshot) => {
       const docs = [];
