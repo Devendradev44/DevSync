@@ -8,6 +8,7 @@ import DocumentList from './DocumentList'
 import { useUser } from '@clerk/nextjs'
 import uuid64 from 'uuid64'
 import { useParams, useRouter } from 'next/navigation'
+import { Progress } from '@/components/ui/progress'
 
 function SideNav() {
   const params = useParams();
@@ -53,6 +54,10 @@ function SideNav() {
               documentName:"Untitled Document",
               documentOutput:[]
             })
+            await setDoc(doc(db,"documentOutput",docId.toString()),{
+                  docId:docId,
+                  output:[]
+                });
             
             setLoading(false);
             router.replace(`/workspace/${params?.workspaceid}/${docId}`);
@@ -77,6 +82,13 @@ function SideNav() {
 
       <DocumentList documentList={documentList}  />
 
+        {/* Progress Bar */}
+
+        <div className="absolute bottom-10 w-[85%]">
+          <Progress value={33} />
+          <h2 className="text-sm font-light my-2"><strong>{documentList?.length}</strong> Out of <strong>5</strong> files used</h2>
+          <h2 className="text-sm font-light">Upgrade your plan for unlimited access</h2>
+        </div>
     </div>
   )
 }
