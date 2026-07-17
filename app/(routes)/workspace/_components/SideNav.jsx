@@ -9,6 +9,9 @@ import { useUser } from '@clerk/nextjs'
 import uuid64 from 'uuid64'
 import { useParams, useRouter } from 'next/navigation'
 import { Progress } from '@/components/ui/progress'
+import { toast } from 'sonner'
+
+const MAX_FILE=process.env.NEXT_PUBLIC_MAX_FILE_COUNT;
 
 function SideNav() {
   const params = useParams();
@@ -43,6 +46,18 @@ function SideNav() {
   };
 
       const CreateNewDocument =async () => {
+        if(documentList?.length >= MAX_FILE) {
+          toast("Upgrade to add new file",{
+            description:"You have reached the maximum file limit for your current plan. Please upgrade to add more files.",
+            action: {
+              label: "Upgrade",
+              onClick: () => 
+                console.log("Undo"),
+          },
+        })
+            return;
+        }
+
         setLoading(true);
          const docId = uuid64();
             await setDoc(doc(db,"WorkspaceDocuments",docId.toString()),{
@@ -85,7 +100,7 @@ function SideNav() {
         {/* Progress Bar */}
 
         <div className="absolute bottom-10 w-[85%]">
-          <Progress value={33} />
+          <Progress value={(documentList?.length / MAX_FILE) * 100} />
           <h2 className="text-sm font-light my-2"><strong>{documentList?.length}</strong> Out of <strong>5</strong> files used</h2>
           <h2 className="text-sm font-light">Upgrade your plan for unlimited access</h2>
         </div>
