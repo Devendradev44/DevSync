@@ -1,8 +1,11 @@
 "use client"
 import React from 'react'
 import SideNav from '../../_components/SideNav'
+import DocumentEditorSection from '../../_components/DocumentEditorSection'
+import { useParams } from 'next/navigation';
 
-function WorkspaceDocument({params}) {
+function WorkspaceDocument() {
+  const params = useParams();
   return (
     <div>
         {/* Side Nav */}
@@ -11,7 +14,7 @@ function WorkspaceDocument({params}) {
       </div>
       {/* Document */   }
       <div className="md:ml-72">
-        Document
+        <DocumentEditorSection params={params} />
       </div>
     </div>
   )
