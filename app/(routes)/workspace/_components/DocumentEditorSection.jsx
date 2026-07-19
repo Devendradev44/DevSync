@@ -1,6 +1,7 @@
 import React from 'react'
 import DocumentHeader from './DocumentHeader'
 import Documentinfo from './Documentinfo'
+import RichDocumentEditor from './RichDocumentEditor'
 
 function DocumentEditorSection({params}) {
 
@@ -13,7 +14,7 @@ function DocumentEditorSection({params}) {
      <Documentinfo params={params} />
 
       {/* Rich Text Editor */}
-
+      <RichDocumentEditor />
     </div>
   )
 }

@@ -17,7 +17,8 @@ function CreateWorkspace() {
   const [coverImage, setCoverImage] = useState('/cover.png');
   const [workspaceName,setWorkspaceName] = useState("");
   const [emoji,setEmoji] = useState("");
-  const {user} = useUser();
+  // const {user} = useUser();
+  const { user, isSignedIn } = useUser();
   const {orgId} = useAuth();
   const [loading,setLoading] = useState(false);
   const router = useRouter();
@@ -26,6 +27,10 @@ function CreateWorkspace() {
    * used to create a new workspace in the firestore database
    */
   const OnCreateWorkspace = async ()=>{
+     if (!isSignedIn || !user) {
+    toast.error("Please sign in first.");
+    return;
+  }
     setLoading(true);
     const workspaceId = Date.now();
     const result = await setDoc(doc(db,"Workspace",workspaceId.toString()),{
@@ -40,6 +45,7 @@ function CreateWorkspace() {
 //     console.log("DB:", db);
 //     console.log("Workspace ID:", workspaceId);
 //     console.log("Doc ID:", docId);
+
     await setDoc(doc(db,"WorkspaceDocuments",docId.toString()),{
       workspaceId:workspaceId,
       createdBy:user?.primaryEmailAddress?.emailAddress,
